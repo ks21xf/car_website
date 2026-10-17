@@ -9,7 +9,26 @@ const router = createBrowserRouter([
   {
     path: "/",
     element: <App></App>,
+    loader: async () =>{
 
+      //we want to fetch car data and image data so do this to do it concurrently
+      const [carResponse, imgResponse] = await Promise.all([
+        fetch("http://localhost:5000/api/cars"),
+        fetch("http://localhost:5000/api/imgs")
+      ]);
+
+
+      if (!carResponse.ok || !imgResponse.ok) {
+        throw new Response("Failed to load data", { status: 500 });
+      }
+
+      //parse
+      const [carData, imgData] = await Promise.all([
+        carResponse.json(),
+        imgResponse.json(),
+      ]);
+      return [carData, imgData]
+    }
   },
   {
     path: "/test",

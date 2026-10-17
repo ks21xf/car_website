@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 import boto3
 import os
 import io
-
+import base64
 
 load_dotenv()
 
@@ -43,7 +43,15 @@ def get_imgs():
     response = sts_client.get_object(Bucket=AWS_BUCKET_NAME, Key='imgs/1_1.png')
 
     image_bytes = response['Body'].read()
-    return send_file(io.BytesIO(image_bytes), mimetype='image/jpeg')
+    #return send_file(io.BytesIO(image_bytes), mimetype='image/jpeg') #returns as file, not needed for react
+
+    b64_string = base64.b64encode(image_bytes).decode('utf-8')
+
+    # Return it wrapped cleanly in a JSON object
+    return jsonify({
+        "image": b64_string,
+        "title": "My Image"
+    })
 
 if __name__ == "__main__":
     app.run(debug=True)
