@@ -8,23 +8,18 @@ function App() {
     const [cars,setCars] =useState([])
     const [img,setImg] = useState([])
 
-    const [cars_data,img_data] = useLoaderData()
-    console.log(cars_data)
-    console.log(img_data)
+    const cars_data = useLoaderData()
     useEffect(()=>{
         if(cars_data){
+            //cars_data.imgs = "https://dw9t7u20zbhyg.cloudfront.net/car_img_data/"
             setCars(cars_data)
-        }if(img_data){
-            const im = img_data.image+""
-            const t =atob(im)
-            setImg(im)
         }
     },[cars_data])
 
   return (
     <>
         {cars.map((car) => (
-          <CarCard key={car.cid} make = {car.make} model = {car.model} year = {car.year} img ={img} ></CarCard>
+          <CarCard key={car.cid} make = {car.make} model = {car.model} year = {car.year} img ={car.imgs} numImages = {car.num_images} ></CarCard>
         ))}
     </>
   )

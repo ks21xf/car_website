@@ -89,3 +89,16 @@ s3_client = aws_session.client('s3')
 
 # The s3_client is now ready for use by your Flask API routes!
 ```
+
+## 5. Use of CloudFront as an Image Distributor
+Now that we have our S3 bucket, we are able to use boto3 to access and pull images from the bucket via API endpoint. However, note that this method requires sending the binary string of the entire image which had to be b64 encoded. This string would be a few megabytes long for a small photo alone. Naturally a website containing tens or hundreds of photos such as this one would be impractical with this method of image extraction.
+
+Making the bucket public wouldn't work either. While this lets us access images via the URL, meaning we simply have to store the URL as an attribute in the database, this leaves the bucket vulnerable to attacks. It's generally advisable to keep buckets and other backend structures as private as possible.
+
+The option I ended up using was Amazon CloudFront, it acts as a content delivery network (CDN) that fetches images from the S3 bucket. Amazon CloudFront allows global caching, keeps buckets private and is fairly cheap, making it very valuable. It also builds off of S3 meaning nothing has to be discarded when setting up a CloudFront Distribution. After setting it up and connecting it to your S3 bucket, you use the distribution domain name of the CloudFront Distribution along with the key to your image in your S3 bucket, and that is your image URL. notice that the images themselves are publicly available but no other information about your bucket is possible to acquire.
+
+Amazon CloudFront may cost (base?) $6 a month.
+
+
+
+
