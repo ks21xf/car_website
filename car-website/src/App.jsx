@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useLoaderData } from 'react-router-dom'
-import './App.css'
+//import './App.css'
 import CarCard from './components/CarCard'
 
 
@@ -19,7 +19,7 @@ function App() {
   return (
     <>
         {cars.map((car) => (
-          <CarCard key={car.cid} make = {car.make} model = {car.model} year = {car.year} img ={car.imgs} numImages = {car.num_images} ></CarCard>
+          <CarCard key = {car.cid} car = {car} ></CarCard>
         ))}
     </>
   )
