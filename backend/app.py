@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, send_file
+from flask import Flask, jsonify, request
 from flask_cors import CORS
 from pymongo import MongoClient
 from dotenv import load_dotenv
@@ -52,6 +52,13 @@ def get_imgs():
         "image": b64_string,
         "title": "My Image"
     })
+
+@app.route('/api/car',methods  = ["POST"])
+def upload_car():
+    car = request.get_json()
+    print(car)
+    return car, 201
+
 
 if __name__ == "__main__":
     app.run(debug=True)

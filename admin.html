@@ -1,0 +1,91 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Add a Car</title>
+</head>
+<body>
+    <h1>Add a Car</h1>
+
+    <form id="car-form">
+        <label>
+            Make:
+            <input type="text" id="make" required>
+        </label>
+
+        <br><br>
+
+        <label>
+            Model:
+            <input type="text" id="model" required>
+        </label>
+
+        <br><br>
+
+        <label>
+            Year:
+            <input type="number" id="year" required>
+        </label>
+
+          <label for="photo-upload">Choose a photo:</label>
+        <input
+            type="file"
+            id="photo-upload"
+            name="photo"
+            accept="image/png, image/jpeg, image/webp"
+            multiple
+        />
+        <br><br>
+
+        <button type="submit">Add Car</button>
+    </form>
+
+    <p id="result"></p>
+
+    <script>
+        const form = document.getElementById("car-form");
+
+        form.addEventListener("submit", async (event) => {
+            // Prevent the browser from reloading the page
+            event.preventDefault();
+
+            // Collect the form values
+            const car = {
+                make: document.getElementById("make").value,
+                model: document.getElementById("model").value,
+                year: Number(document.getElementById("year").value)
+            };
+
+            try {
+                // Send a POST request to Flask
+                const response = await fetch(
+                    "http://localhost:5000/api/car",
+                    {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify(car)
+                    }
+                );
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.error || "Request failed");
+                }
+
+                document.getElementById("result").textContent =
+                    data.message;
+
+                form.reset();
+
+            } catch (error) {
+                document.getElementById("result").textContent =
+                    error.message;
+            }
+        });
+    </script>
+</body>
+</html>
