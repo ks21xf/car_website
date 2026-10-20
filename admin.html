@@ -11,21 +11,21 @@
     <form id="car-form">
         <label>
             Make:
-            <input type="text" id="make" required>
+            <input type="text" id="make" required value="luigi">
         </label>
 
         <br><br>
 
         <label>
             Model:
-            <input type="text" id="model" required>
+            <input type="text" id="model" required value ="mangione">
         </label>
 
         <br><br>
 
         <label>
             Year:
-            <input type="number" id="year" required>
+            <input type="number" id="year" required value = "2002">
         </label>
 
           <label for="photo-upload">Choose a photo:</label>
@@ -47,44 +47,36 @@
         const form = document.getElementById("car-form");
 
         form.addEventListener("submit", async (event) => {
-            // Prevent the browser from reloading the page
             event.preventDefault();
 
             // Collect the form values
-            const car = {
-                make: document.getElementById("make").value,
-                model: document.getElementById("model").value,
-                year: Number(document.getElementById("year").value)
-            };
+            const formData = new FormData();
 
+            formData.append('make',document.getElementById("make").value),
+            formData.append('model',document.getElementById("model").value),
+            formData.append('year',Number(document.getElementById("year").value)),
+            formData.append('car-img',document.getElementById("photo-upload").files[0])
+                console.log("Form data entries:", [...formData.entries()]);
+
+            console.log(document.getElementById("photo-upload").files[0])
             try {
                 // Send a POST request to Flask
-                const response = await fetch(
-                    "http://localhost:5000/api/car",
-                    {
-                        method: "POST",
-                        headers: {
-                            "Content-Type": "application/json"
-                        },
-                        body: JSON.stringify(car)
-                    }
-                );
+                const response = await fetch( "http://localhost:5000/api/car",
+                    {   method: "POST",
+                        body: formData,
+                    });
 
                 const data = await response.json();
+                if (!response.ok) throw new Error(data.error || "Request failed");
 
-                if (!response.ok) {
-                    throw new Error(data.error || "Request failed");
-                }
-
-                document.getElementById("result").textContent =
-                    data.message;
-
+                document.getElementById("result").textContent = data.message;
                 form.reset();
 
             } catch (error) {
-                document.getElementById("result").textContent =
-                    error.message;
+                console.log(error)
+                document.getElementById("result").textContent =error.message;
             }
+
         });
     </script>
 </body>
