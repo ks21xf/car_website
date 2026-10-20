@@ -25,7 +25,8 @@ AWS_ACCESS_KEY=os.getenv("AWS_ACCESS_KEY")
 AWS_SECRET_ACCESS_KEY=os.getenv("AWS_SECRET_ACCESS_KEY")
 AWS_REGION=os.getenv("AWS_REGION")
 AWS_BUCKET_NAME=os.getenv("AWS_BUCKET_NAME")
-AWS_BASE_URL =os.getenv("AWS_BASE_URL")+f"/{generate_alphanumeric(20)}"
+AWS_BASE_URL =os.getenv("AWS_BASE_URL")
+CLOUDFRONT_PUBLIC_URL = os.getenv("CLOUDFRONT_PUBLIC_URL")
 
 session = boto3.Session(
     aws_access_key_id=AWS_ACCESS_KEY,
@@ -69,29 +70,45 @@ def upload_car():
     make = request.form.get("make")
     model = request.form.get("model")
     year = request.form.get("year")
-    photo = request.files.get('car-img')
+    price = request.form.get("price")
+    mileage = request.form.get("mileage")
+    seats = request.form.get("seats")
+    id = generate_alphanumeric(20)
+    new_file_path = AWS_BASE_URL+"/"+id+"/"
 
-    # # Create the folder by putting an empty object with a trailing slash
-    # sts_client.put_object(
-    #     Bucket=AWS_BUCKET_NAME,
-    #     Key=AWS_BASE_URL,
-    #     Body=''
-    # )
+    print(CLOUDFRONT_PUBLIC_URL+new_file_path)
 
-    if photo and photo.filename:
-        # Create a safe, unique S3 object key
-        filename = secure_filename(photo.filename)
-        s3_key = f"{AWS_BASE_URL}/{filename}"
+    collection.insert_one({
+        "cid" : id,
+        "make": make,
+        "model": model,
+        "year": year,
+        "price": price,
+        "mileage": mileage,
+        "seats": seats,
+        "imgs":CLOUDFRONT_PUBLIC_URL+new_file_path,
+    })
 
-        # Upload the file-like object directly
-        sts_client.upload_fileobj(
-            photo,
-            AWS_BUCKET_NAME,
-            s3_key,
-            ExtraArgs={
-                "ContentType": photo.mimetype
-            }
-        )
+
+    #photo upload
+    num_files= int(request.form.get('num_files'))
+    for i in range(num_files):
+        photo = request.files.get('img'+str(i))
+
+        #if photo exists, process it
+        if photo and photo.filename:
+            filename = secure_filename(photo.filename)
+            s3_key = f"{new_file_path}{filename}" #if folder doesn't exist, it will create AWS_BASE_URL as a folder and put the filename in there
+
+            # Upload the file-like object directly
+            sts_client.upload_fileobj(
+                photo,
+                AWS_BUCKET_NAME,
+                s3_key,
+                ExtraArgs={
+                    "ContentType": photo.mimetype
+                }
+            )
 
     return {"Hello":"hi"}, 201
 

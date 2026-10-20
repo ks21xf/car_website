@@ -28,6 +28,21 @@
             <input type="number" id="year" required value = "2002">
         </label>
 
+        <label>
+            Price:
+            <input type="number" id="price" required value = "5800">
+        </label>
+
+        <label>
+            Mileage:
+            <input type="number" id="mileage" required value = "98000">
+        </label>
+
+        <label>
+            Number of Seats:
+            <input type="number" id="seats" required value = "4">
+        </label>
+
           <label for="photo-upload">Choose a photo:</label>
         <input
             type="file"
@@ -36,6 +51,25 @@
             accept="image/png, image/jpeg, image/webp"
             multiple
         />
+
+        <div id = "gas_type" >
+            <h4>Gas Type:</h4>
+            <input type="radio" id="gasoline" name="gas_type" value="gasoline" />
+            <label for="css">Gasoline</label>
+            <input type="radio" id="deisel" name="gas_type" value="deisel" />
+            <label for="css">Deisel</label>
+            <input type="radio" id="electric" name="gas_type" value="electric" />
+            <label for="css">Electric</label>
+        </div>
+
+        <div id = "transmission">
+            <h4>Transmission:</h4>
+            <input type="radio" id="manual" name="transmission" value="manual" />
+            <label for="css">Manual</label>
+            <input type="radio" id="automatic" name="transmission" value="automatic" />
+            <label for="css">Automatic</label>
+        </div>
+
         <br><br>
 
         <button type="submit">Add Car</button>
@@ -47,18 +81,42 @@
         const form = document.getElementById("car-form");
 
         form.addEventListener("submit", async (event) => {
+            //checks
+            if (document.querySelector('input[name="gas_type"]:checked')== undefined){
+                alert("please select a gas type")
+                return
+            }
+            if(document.getElementById("photo-upload").files.length ==0){
+                alert("Please upload at least one photo of the car")
+                return
+            }
+            if (document.querySelector('input[name="transmission"]:checked')== undefined){
+                alert("please select a transmission")
+                return
+            }
+
             event.preventDefault();
 
             // Collect the form values
             const formData = new FormData();
 
-            formData.append('make',document.getElementById("make").value),
-            formData.append('model',document.getElementById("model").value),
-            formData.append('year',Number(document.getElementById("year").value)),
-            formData.append('car-img',document.getElementById("photo-upload").files[0])
-                console.log("Form data entries:", [...formData.entries()]);
+            formData.append('make',document.getElementById("make").value)
+            formData.append('model',document.getElementById("model").value)
+            formData.append('year',Number(document.getElementById("year").value))
+            formData.append('price',document.getElementById("price").value)
+            formData.append('mileage',document.getElementById("mileage").value)
+            formData.append('seats',document.getElementById("seats").value)
+            formData.append('gas_type',document.querySelector('input[name="gas_type"]:checked').value)
+            formData.append('transmission',document.querySelector('input[name="transmission"]:checked').value)
 
-            console.log(document.getElementById("photo-upload").files[0])
+            //upload files
+            formData.append('num_files',document.getElementById("photo-upload").files.length)
+            for(var v =0; v<document.getElementById("photo-upload").files.length;v++){
+                console.log(document.getElementById("photo-upload").files[v])
+                formData.append('img'+v,document.getElementById("photo-upload").files[v],`${v+1}.jpg`)
+
+            }
+
             try {
                 // Send a POST request to Flask
                 const response = await fetch( "http://localhost:5000/api/car",
