@@ -43,6 +43,33 @@ db = client['cars']
 collection = db['car']
 print(collection)
 
+@app.route("/api/getcar",methods=["GET"])
+def get_car_by_id():
+
+    #get the cid and find the specific car with that id
+    cid = request.args.get("cid")
+    query = {"cid": cid}
+    data = collection.find_one(query)
+
+    #manually build the json bc its just easier
+    response = {
+        "id": str(data["_id"]),
+        "name": data.get("cid"),
+        "make": data.get("make"),
+        "model": data.get("model"),
+        "year": data.get("year"),
+        "price": data.get("price"),
+        "mileage": data.get("mileage"),
+        "name": data.get("cid"),
+        "fuel_type": data.get("fuel_type"),
+        "imgs": data.get("imgs"),
+        "num_images": data.get("num_images"),
+        "seats": data.get("seats"),
+        "transmission": data.get("transmission"),
+    }
+
+    return jsonify(response)
+
 
 @app.route("/api/cars",methods=["GET"])
 def get_cars():
@@ -92,6 +119,8 @@ def upload_car():
     price = request.form.get("price")
     mileage = request.form.get("mileage")
     seats = request.form.get("seats")
+    transmission = request.form.get("transmission")
+    fuel_type = request.form.get("fuel_type")
     id = generate_alphanumeric(20)
     new_file_path = AWS_BASE_URL+"/"+id+"/"
 
@@ -104,6 +133,8 @@ def upload_car():
         "mileage": mileage,
         "seats": seats,
         "imgs":CLOUDFRONT_PUBLIC_URL+new_file_path,
+        "transmission": transmission,
+        "fuel_type": fuel_type,
     })
 
 
@@ -127,7 +158,7 @@ def upload_car():
                 }
             )
 
-    return {"Message":"Sucessful upload."}, 201
+    return {"Message":f"Sucessful upload. Save the ID of the car: {id}"}, 201
 
 if __name__ == "__main__":
     app.run(debug=True)

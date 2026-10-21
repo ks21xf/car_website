@@ -11,36 +11,36 @@
     <form id="car-form">
         <label>
             Make:
-            <input type="text" id="make" required value="luigi">
+            <input type="text" id="make" required >
         </label>
 
         <br><br>
 
         <label>
             Model:
-            <input type="text" id="model" required value ="mangione">
+            <input type="text" id="model" required >
         </label>
 
         <br><br>
 
         <label>
             Year:
-            <input type="number" id="year" required value = "2002">
+            <input type="number" id="year" required>
         </label>
 
         <label>
             Price:
-            <input type="number" id="price" required value = "5800">
+            <input type="number" id="price" required >
         </label>
 
         <label>
             Mileage:
-            <input type="number" id="mileage" required value = "98000">
+            <input type="number" id="mileage" required>
         </label>
 
         <label>
             Number of Seats:
-            <input type="number" id="seats" required value = "4">
+            <input type="number" id="seats" required>
         </label>
 
           <label for="photo-upload">Choose a photo:</label>
@@ -52,13 +52,13 @@
             multiple
         />
 
-        <div id = "gas_type" >
-            <h4>Gas Type:</h4>
-            <input type="radio" id="gasoline" name="gas_type" value="gasoline" />
+        <div id = "fuel_type" >
+            <h4>Fuel Type:</h4>
+            <input type="radio" id="gasoline" name="fuel_type" value="gasoline" />
             <label for="css">Gasoline</label>
-            <input type="radio" id="deisel" name="gas_type" value="deisel" />
+            <input type="radio" id="deisel" name="fuel_type" value="deisel" />
             <label for="css">Deisel</label>
-            <input type="radio" id="electric" name="gas_type" value="electric" />
+            <input type="radio" id="electric" name="fuel_type" value="electric" />
             <label for="css">Electric</label>
         </div>
 
@@ -122,8 +122,8 @@
 
         form.addEventListener("submit", async (event) => {
             //checks
-            if (document.querySelector('input[name="gas_type"]:checked')== undefined){
-                alert("please select a gas type")
+            if (document.querySelector('input[name="fuel_type"]:checked')== undefined){
+                alert("please select a fuel type")
                 return
             }
             if(document.getElementById("photo-upload").files.length ==0){
@@ -146,7 +146,7 @@
             formData.append('price',document.getElementById("price").value)
             formData.append('mileage',document.getElementById("mileage").value)
             formData.append('seats',document.getElementById("seats").value)
-            formData.append('gas_type',document.querySelector('input[name="gas_type"]:checked').value)
+            formData.append('fuel_type',document.querySelector('input[name="fuel_type"]:checked').value)
             formData.append('transmission',document.querySelector('input[name="transmission"]:checked').value)
 
             //upload files

@@ -1,10 +1,31 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import App from './App.jsx'
+import MainPage from './main_page.jsx'
+import Car from './car.jsx'
 import Test from './components/test.jsx'
 import { createBrowserRouter,RouterProvider} from "react-router-dom";
 
 const router = createBrowserRouter([
+    {
+    path: "/cars/:id",
+    element: <Car></Car>,
+    loader: async ({params} ) =>{
+      const { id } = params;
+      const response = await fetch("http://localhost:5000/api/getcar?cid="+id)
+      if (!response.ok) throw new Error("Failed to fetch cars");
+      return await response.json()
+    }
+  },
+      {
+    path: "/mainpage",
+    element: <MainPage></MainPage>,
+    loader: async () =>{
+      const response = await fetch("http://localhost:5000/api/cars")
+      if (!response.ok) throw new Error("Failed to fetch cars");
+      return await response.json()
+    }
+  },
   {
     path: "/",
     element: <App></App>,
