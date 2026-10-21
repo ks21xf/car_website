@@ -22,10 +22,16 @@ session = boto3.Session(
 # 2. Test the connection against the Security Token Service
 sts_client = session.client('s3')
 
-try:
-    response = sts_client.get_object(Bucket=AWS_BUCKET_NAME, Key='imgs/1_1.png')
-    print("✅ Success! Connected as User:")
-    print( response['Body'].read())
-except ClientError as e:
-    print("❌ Connection Failed!")
-    print(e.response['Error']['Message'])
+response = sts_client.list_objects_v2(Bucket=AWS_BUCKET_NAME, Prefix="car_img_data/P6173dMlqN3zPMwcjVA0/")
+
+# 2. Check if the folder actually has files in it
+if 'Contents' in response:
+    # Build the list of file keys to delete
+    delete_keys = [{'Key': obj['Key']} for obj in response['Contents']]
+
+    # 3. Delete everything in a single, fast request
+    sts_client.delete_objects(
+        Bucket=AWS_BUCKET_NAME,
+        Delete={'Objects': delete_keys}
+    )
+    print(f"Successfully deleted {len(delete_keys)} photos.")

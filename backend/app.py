@@ -64,6 +64,25 @@ def get_imgs():
         "title": "My Image"
     })
 
+@app.route('/api/deletecar',methods =["POST"])
+def delete_car():
+    cid = request.form.get("cid")
+    print(cid)
+
+    #delete car data on db side - query the correct car with its id and delet
+    query = {"cid": cid}
+    collection.delete_one(query)
+
+    #delete car images on s4 side - delete the folder
+    response = sts_client.list_objects_v2(Bucket=AWS_BUCKET_NAME, Prefix=f"{AWS_BASE_URL}/{cid}/")
+    if 'Contents' in response: #if there's actually anything to delete
+
+        # Build the list of file keys to delete
+        delete_keys = [{'Key': obj['Key']} for obj in response['Contents']]
+        sts_client.delete_objects(Bucket=AWS_BUCKET_NAME,Delete={'Objects': delete_keys})
+
+    return {"Message":"Successful deletion."}, 201
+
 @app.route('/api/car',methods  = ["POST"])
 def upload_car():
 
@@ -75,8 +94,6 @@ def upload_car():
     seats = request.form.get("seats")
     id = generate_alphanumeric(20)
     new_file_path = AWS_BASE_URL+"/"+id+"/"
-
-    print(CLOUDFRONT_PUBLIC_URL+new_file_path)
 
     collection.insert_one({
         "cid" : id,
@@ -110,7 +127,7 @@ def upload_car():
                 }
             )
 
-    return {"Hello":"hi"}, 201
+    return {"Message":"Sucessful upload."}, 201
 
 if __name__ == "__main__":
     app.run(debug=True)

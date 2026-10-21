@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Add a Car</title>
+    <title>Admin Portal</title>
 </head>
 <body>
     <h1>Add a Car</h1>
@@ -77,7 +77,47 @@
 
     <p id="result"></p>
 
+    <h1>Delete a Car</h1>
+    <form id = "car-deletion-form">
+        <label>
+            Enter ID of car to delete:
+            <input type="text" id="car-to-delete">
+        </label>
+        <button type="delete">Delete Car</button>
+
+    </form>
+    <p id="result-deletion"></p>
+
+
+
     <script>
+        const deleteForm = document.getElementById("car-deletion-form")
+        deleteForm.addEventListener("submit", async (event)=>{
+            event.preventDefault();
+
+            const formData = new FormData()
+            formData.append('cid',document.getElementById("car-to-delete").value)
+            try {
+                    // Send a POST request to Flask
+                    const response = await fetch( "http://localhost:5000/api/deletecar",
+                        {   method: "POST",
+                            body: formData,
+                        });
+
+                    const data = await response.json();
+                    if (!response.ok) throw new Error(data.error || "Request failed");
+
+                    document.getElementById("result-deletion").textContent =data.Message;
+                    form.reset();
+
+                } catch (error) {
+                    console.log(error)
+                    document.getElementById("result-deletion").textContent =error.message;
+                }
+
+
+        });
+
         const form = document.getElementById("car-form");
 
         form.addEventListener("submit", async (event) => {
@@ -114,7 +154,6 @@
             for(var v =0; v<document.getElementById("photo-upload").files.length;v++){
                 console.log(document.getElementById("photo-upload").files[v])
                 formData.append('img'+v,document.getElementById("photo-upload").files[v],`${v+1}.jpg`)
-
             }
 
             try {
@@ -127,7 +166,7 @@
                 const data = await response.json();
                 if (!response.ok) throw new Error(data.error || "Request failed");
 
-                document.getElementById("result").textContent = data.message;
+                document.getElementById("result").textContent = data.Message;
                 form.reset();
 
             } catch (error) {
