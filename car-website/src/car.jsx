@@ -8,9 +8,11 @@ import { useState } from 'react';
 export default function Car(){
     const car_data = useLoaderData()
 
+    var numImages = car_data.numImages
     const [imgCounter,setImgCounter] = useState(1)
 
     console.log(car_data)
+    console.log(car_data.unique_features)
     console.log(car_data.imgs)
     return(
         <>
@@ -60,7 +62,11 @@ export default function Car(){
                 <br></br>
                 <div id = "card-container" style ={{display: "inline-flex", flexDirection: "column", justifyItems: "center", margin: "0px 15px", padding: "0px 15px",  boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.25)'}}>
                     <h2>More Features</h2>
-
+                    <ul>
+                            {car_data.unique_features.split(",").map((item, index) => (
+                                <li key={index}>{item}</li>
+                            ))}
+                    </ul>
                 </div>
             </div>
         </div>

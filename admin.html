@@ -71,6 +71,32 @@
         </div>
 
         <br><br>
+        <h4>Unique Features</h4>
+        <p>Check the features that are present on the car. You can also enter custom features in the textbox below the checkboxes. </p>
+            <input type="checkbox" id="heated_seats" name="heated_seats" value="Heated Seats">
+            <label for="heated_seats">Heated Seats</label><br>
+            <input type="checkbox" id="heated_steering_wheel" name="heated_steering_wheel" value="Heated Steering Wheel">
+            <label for="heated_steering_wheel">Heated Steering Wheel</label><br>
+            <input type="checkbox" id="bluetooth" name="bluetooth" value="Bluetooth">
+            <label for="bluetooth">Bluetooth</label><br>
+
+            <div id = "other_features_field">
+                <label for="other0">Other Features:</label> <button onclick = "generateTextField()" type = "button">Generate Another Custom Text Field</button><br>
+                <input type="text" id="other0" name="other0">
+            </div>
+
+            <div id = "standard_features_field">
+                <h4>Standard Features</h4>
+
+                <input type="checkbox" id="air_conditioning" name="air_conditioning" value="Air Conditioning">
+                <label for="air_conditioning">A/C and Heating</label><br>
+                <input type="checkbox" id="power_steering" name="power_steering" value="Power Steering">
+                <label for="power_steering">Power Steering</label><br>
+                <input type="checkbox" id="power_braking" name="power_braking" value="Power Braking">
+                <label for="power_braking">Power Braking</label><br>
+                <input type="checkbox" id="automatic_windows" name="automatic_windows" value="Automatic Windows">
+                <label for="automatic_windows">Automatic Windows</label><br>
+            </div>
 
         <button type="submit">Add Car</button>
     </form>
@@ -91,6 +117,22 @@
 
 
     <script>
+        var numFields = 1
+        function generateTextField(){
+            const id = document.getElementById("other_features_field")
+            const ip = document.createElement("input")
+            ip.type = "text";
+            ip.name = "other"+numFields;
+            ip.id = "other"+numFields;
+
+            const label = document.createElement('label')
+            label.htmlFor = "other"+numFields
+            id.appendChild(ip)
+            id.appendChild(label)
+            numFields++
+
+        }
+
         const deleteForm = document.getElementById("car-deletion-form")
         deleteForm.addEventListener("submit", async (event)=>{
             event.preventDefault();
@@ -118,6 +160,37 @@
 
         });
 
+        function assembleFeatureList(){
+            //contains the ids of all the checkboxes, used for looping convienence
+            const featureList = ['heated_seats','heated_steering_wheel','bluetooth'];
+            const carFeatures = []//features the car has
+
+            for(var v =0;v<featureList.length;v++){
+                if(document.getElementById(featureList[v]).checked) carFeatures.push(document.getElementById(featureList[v]).value)
+            }
+
+            for(var v =0;v<numFields;v++){
+                if(document.getElementById("other"+v)){
+                    if(document.getElementById("other"+v).value!= ''){
+                        carFeatures.push(document.getElementById("other"+v).value)
+                    }
+                }
+            }
+            console.log(carFeatures)
+            return carFeatures
+        }
+        function assembleStandardFeatureList(){
+            //contains the ids of all the checkboxes, used for looping convienence
+            const featureList = ['air_conditioning','power_steering','power_braking','automatic_windows'];
+            const carFeatures = []//features the car has
+
+            for(var v =0;v<featureList.length;v++){
+                if(document.getElementById(featureList[v]).checked) carFeatures.push(document.getElementById(featureList[v]).value)
+            }
+
+            console.log(carFeatures)
+            return carFeatures
+        }
         const form = document.getElementById("car-form");
 
         form.addEventListener("submit", async (event) => {
@@ -148,6 +221,12 @@
             formData.append('seats',document.getElementById("seats").value)
             formData.append('fuel_type',document.querySelector('input[name="fuel_type"]:checked').value)
             formData.append('transmission',document.querySelector('input[name="transmission"]:checked').value)
+            formData.append('num_images',document.getElementById("photo-upload").files.length)
+            var featureList = assembleFeatureList()
+            formData.append('unique_features',featureList)
+            featureList = assembleStandardFeatureList()
+            formData.append('standard_features',featureList)
+
 
             //upload files
             formData.append('num_files',document.getElementById("photo-upload").files.length)

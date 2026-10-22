@@ -66,6 +66,8 @@ def get_car_by_id():
         "num_images": data.get("num_images"),
         "seats": data.get("seats"),
         "transmission": data.get("transmission"),
+        "unique_features": data.get("unique_features"),
+        "standard_features": data.get("standard_features")
     }
 
     return jsonify(response)
@@ -122,6 +124,9 @@ def upload_car():
     transmission = request.form.get("transmission")
     fuel_type = request.form.get("fuel_type")
     id = generate_alphanumeric(20)
+    num_images = request.form.get("num_images")
+    unique_features = request.form.get("unique_features")
+    standard_features = request.form.get("standard_features")
     new_file_path = AWS_BASE_URL+"/"+id+"/"
 
     collection.insert_one({
@@ -135,6 +140,9 @@ def upload_car():
         "imgs":CLOUDFRONT_PUBLIC_URL+new_file_path,
         "transmission": transmission,
         "fuel_type": fuel_type,
+        "num_images" : num_images,
+        "unique_features": unique_features,
+        "standard_features": standard_features,
     })
 
 
