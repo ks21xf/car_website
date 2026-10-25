@@ -67,7 +67,8 @@ def get_car_by_id():
         "seats": data.get("seats"),
         "transmission": data.get("transmission"),
         "unique_features": data.get("unique_features"),
-        "standard_features": data.get("standard_features")
+        "standard_features": data.get("standard_features"),
+        "sold" : data.get("sold"),
     }
 
     return jsonify(response)
@@ -92,6 +93,19 @@ def get_imgs():
         "image": b64_string,
         "title": "My Image"
     })
+
+@app.route('/api/markcarassold',methods =["POST"])
+def mark_car_as_sold():
+    cid = request.form.get("cid")
+    query = {"cid": cid}
+    update = {
+    "$set": { #apparently you need this $set thing for this to work
+        "sold": True,
+        }
+    }
+    collection.update_one(query,update,upsert=False) #last param adds this as a new entry to db if the cid didnt exist
+    return {"Message": "Successfully marked as sold."},201
+
 
 @app.route('/api/deletecar',methods =["POST"])
 def delete_car():
@@ -143,6 +157,7 @@ def upload_car():
         "num_images" : num_images,
         "unique_features": unique_features,
         "standard_features": standard_features,
+        "sold": False
     })
 
 

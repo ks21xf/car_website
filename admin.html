@@ -56,8 +56,8 @@
             <h4>Fuel Type:</h4>
             <input type="radio" id="gasoline" name="fuel_type" value="gasoline" />
             <label for="css">Gasoline</label>
-            <input type="radio" id="deisel" name="fuel_type" value="deisel" />
-            <label for="css">Deisel</label>
+            <input type="radio" id="diesel" name="fuel_type" value="diesel" />
+            <label for="css">Diesel</label>
             <input type="radio" id="electric" name="fuel_type" value="electric" />
             <label for="css">Electric</label>
         </div>
@@ -103,6 +103,20 @@
 
     <p id="result"></p>
 
+
+    <h1>Label a Car as Sold</h1>
+    <p>Mark a car with a 'sold' label. This does not delete a car, the car is left up on the site and has a sold sign displayed over its card.</p>
+    <form id = "car-mark-sold-form">
+        <label>
+            Enter ID of car to Label as sold:
+            <input type="text" id="car-to-mark-sold">
+        </label>
+        <button type="mark-sold">Label as Sold</button>
+
+    </form>
+    <p id="result-mark-sold"></p>
+
+
     <h1>Delete a Car</h1>
     <form id = "car-deletion-form">
         <label>
@@ -132,6 +146,30 @@
             numFields++
 
         }
+        const markSoldForm = document.getElementById("car-mark-sold-form")
+        markSoldForm.addEventListener("submit", async (event)=>{
+            event.preventDefault();
+
+            const formData = new FormData()
+            formData.append('cid',document.getElementById("car-to-mark-sold").value)
+            try {
+                    // Send a POST request to Flask
+                    const response = await fetch( "http://localhost:5000/api/markcarassold",
+                        {   method: "POST",
+                            body: formData,
+                        });
+
+                    const data = await response.json();
+                    if (!response.ok) throw new Error(data.error || "Request failed");
+
+                    document.getElementById("result-deletion").textContent =data.Message;
+                    form.reset();
+
+                } catch (error) {
+                    console.log(error)
+                    document.getElementById("result-mark-sold").textContent =error.message;
+                }
+        });
 
         const deleteForm = document.getElementById("car-deletion-form")
         deleteForm.addEventListener("submit", async (event)=>{
@@ -156,8 +194,6 @@
                     console.log(error)
                     document.getElementById("result-deletion").textContent =error.message;
                 }
-
-
         });
 
         function assembleFeatureList(){

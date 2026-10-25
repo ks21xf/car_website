@@ -14,6 +14,7 @@ export default function Car(){
     console.log(car_data)
     console.log(car_data.unique_features)
     console.log(car_data.imgs)
+    console.log(car_data)
     return(
         <>
         <div style = {{display: "inline-flex"}}>
@@ -51,7 +52,7 @@ export default function Car(){
                 <div id = "card-container" style ={{display: "inline-flex", flexDirection: "column", justifyItems: "center", margin: "0px 15px", padding: "0px 15px",  boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.25)'}}>
                     <h1>{car_data.year} {car_data.make} {car_data.model}</h1>
                     <h2>${car_data.price}</h2>
-                    <button>Contact Us</button>
+                    {car_data.sold ? <button disabled>This Vehicle has Already Sold</button> : <button>Contact Us</button> }
                     <br></br>
                 </div>
                 <br></br>
@@ -61,9 +62,18 @@ export default function Car(){
                 </div>
                 <br></br>
                 <div id = "card-container" style ={{display: "inline-flex", flexDirection: "column", justifyItems: "center", margin: "0px 15px", padding: "0px 15px",  boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.25)'}}>
-                    <h2>More Features</h2>
+                    <h2>Unique Features</h2>
                     <ul>
                             {car_data.unique_features.split(",").map((item, index) => (
+                                <li key={index}>{item}</li>
+                            ))}
+                    </ul>
+                </div>
+                <br></br>
+                <div id = "card-container" style ={{display: "inline-flex", flexDirection: "column", justifyItems: "center", margin: "0px 15px", padding: "0px 15px",  boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.25)'}}>
+                    <h2>Standard Features</h2>
+                    <ul>
+                            {car_data.standard_features.split(",").map((item, index) => (
                                 <li key={index}>{item}</li>
                             ))}
                     </ul>
