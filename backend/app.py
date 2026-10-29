@@ -98,12 +98,21 @@ def get_imgs():
 def mark_car_as_sold():
     cid = request.form.get("cid")
     query = {"cid": cid}
+
+    data = collection.find_one(query)
+    print(data)
+    if data is None:
+        return {"Message": "Request failed because no car with this ID was found. Verify the ID was entered correctly."}
+    if data['sold'] == True:
+        return  {"Message": "This car is already marked as sold."}
+
     update = {
     "$set": { #apparently you need this $set thing for this to work
         "sold": True,
         }
     }
     collection.update_one(query,update,upsert=False) #last param adds this as a new entry to db if the cid didnt exist
+
     return {"Message": "Successfully marked as sold."},201
 
 
@@ -123,8 +132,8 @@ def delete_car():
         # Build the list of file keys to delete
         delete_keys = [{'Key': obj['Key']} for obj in response['Contents']]
         sts_client.delete_objects(Bucket=AWS_BUCKET_NAME,Delete={'Objects': delete_keys})
-
-    return {"Message":"Successful deletion."}, 201
+        return {"Message":"Successful deletion."}, 201
+    return {"Message": "Unable to delete - ID does not exist. Verify the ID is correct. "}, 201
 
 @app.route('/api/car',methods  = ["POST"])
 def upload_car():
@@ -142,6 +151,12 @@ def upload_car():
     unique_features = request.form.get("unique_features")
     standard_features = request.form.get("standard_features")
     new_file_path = AWS_BASE_URL+"/"+id+"/"
+    print("d")
+    print(unique_features)
+    if make == None or model == None or year == None or price == None or mileage == None or seats == None or transmission == None or fuel_type == None or id == None or num_images == 0 or unique_features == '' or standard_features == '':
+        return {"Message":"Upload failed. At least one of the fields were not filled in. Ensure all fields are filled, at least one photo of the car is provided, and at least one standard feature and one unique feature is checked."}, 201
+
+
 
     collection.insert_one({
         "cid" : id,

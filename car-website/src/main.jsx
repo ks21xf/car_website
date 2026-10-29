@@ -5,6 +5,7 @@ import MainPage from './main_page.jsx'
 import Car from './car.jsx'
 import Test from './components/test.jsx'
 import { createBrowserRouter,RouterProvider} from "react-router-dom";
+import ContactPage from './contact_page.jsx'
 
 const router = createBrowserRouter([
     {
@@ -17,14 +18,14 @@ const router = createBrowserRouter([
       return await response.json()
     }
   },
-      {
+  {
     path: "/mainpage",
     element: <MainPage></MainPage>,
     loader: async () =>{
       const response = await fetch("http://localhost:5000/api/cars")
       if (!response.ok) throw new Error("Failed to fetch cars");
       return await response.json()
-    }
+  }
   },
   {
     path: "/",
@@ -40,6 +41,16 @@ const router = createBrowserRouter([
     element:<Test></Test>,
     loader: async () =>{
       const response = await fetch("http://localhost:5000/api/cars")
+      if (!response.ok) throw new Error("Failed to fetch cars");
+      return await response.json()
+    }
+  },
+  {
+    path: "/contact/:id",
+    element:<ContactPage></ContactPage>,
+    loader: async ({params} ) =>{
+      const { id } = params;
+      const response = await fetch("http://localhost:5000/api/getcar?cid="+id)
       if (!response.ok) throw new Error("Failed to fetch cars");
       return await response.json()
     }

@@ -1,4 +1,4 @@
-import { useLoaderData } from 'react-router-dom'
+import { useLoaderData, useNavigate } from 'react-router-dom'
 import mileage from './assets/mileage.svg';
 import gas_station from './assets/gas_station.svg';
 import person from './assets/person.svg';
@@ -10,11 +10,11 @@ export default function Car(){
 
     var numImages = car_data.numImages
     const [imgCounter,setImgCounter] = useState(1)
+    const navigate = useNavigate()
 
-    console.log(car_data)
-    console.log(car_data.unique_features)
-    console.log(car_data.imgs)
-    console.log(car_data)
+    function navigateToContactPage(cid){
+        navigate("/contact/"+cid);
+    }
     return(
         <>
         <div style = {{display: "inline-flex"}}>

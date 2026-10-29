@@ -87,14 +87,14 @@
 
             <div id = "standard_features_field">
                 <h4>Standard Features</h4>
-
-                <input type="checkbox" id="air_conditioning" name="air_conditioning" value="Air Conditioning">
+                <p>Standard Features found in most cars are pre-checked. Uncheck any features that are not present on the car.</p>
+                <input type="checkbox" id="air_conditioning" name="air_conditioning" value="Air Conditioning" checked>
                 <label for="air_conditioning">A/C and Heating</label><br>
-                <input type="checkbox" id="power_steering" name="power_steering" value="Power Steering">
+                <input type="checkbox" id="power_steering" name="power_steering" value="Power Steering" checked>
                 <label for="power_steering">Power Steering</label><br>
-                <input type="checkbox" id="power_braking" name="power_braking" value="Power Braking">
+                <input type="checkbox" id="power_braking" name="power_braking" value="Power Braking" checked>
                 <label for="power_braking">Power Braking</label><br>
-                <input type="checkbox" id="automatic_windows" name="automatic_windows" value="Automatic Windows">
+                <input type="checkbox" id="automatic_windows" name="automatic_windows" value="Automatic Windows" checked>
                 <label for="automatic_windows">Automatic Windows</label><br>
             </div>
 
@@ -162,7 +162,7 @@
                     const data = await response.json();
                     if (!response.ok) throw new Error(data.error || "Request failed");
 
-                    document.getElementById("result-deletion").textContent =data.Message;
+                    document.getElementById("result-mark-sold").textContent =data.Message;
                     form.reset();
 
                 } catch (error) {
