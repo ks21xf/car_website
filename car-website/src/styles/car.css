@@ -1,0 +1,52 @@
+
+.carousel-buttons{
+    width: auto;
+    position: absolute;
+    top:50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    font-size: 4rem;
+    cursor: pointer;
+    border-radius: 0.25rem;
+    padding: 0rem 0.25rem;
+    color: rgba(255,255,225,0.9);
+    background-color: rgba(0,0,0,0.1);
+
+}
+.carousel-buttons:focus,
+.carousel-buttons:hover{
+    color:white;
+    background-color: rgba(0,0,0,0.2);
+}
+
+.imgs-below-photo-cont{
+    display:inline-flex;
+    justify-items: center;
+    flex-direction: column;
+}
+
+.carousel-buttons.next{
+    right: 1rem
+}
+
+.carousel-buttons.prev{
+    left: 1rem
+}
+
+.dots{
+    height:10px;
+    width:10px;
+    background-color: darkslategrey;
+    border: none;
+}
+.dots:hover{
+    background-color: black;
+}
+
+.dots.selected{
+    height:20px;
+    width:20px;
+    background-color: darkslategrey;
+    border: none;
+}

@@ -268,9 +268,9 @@
             formData.append('num_files',document.getElementById("photo-upload").files.length)
             for(var v =0; v<document.getElementById("photo-upload").files.length;v++){
                 console.log(document.getElementById("photo-upload").files[v])
-                formData.append('img'+v,document.getElementById("photo-upload").files[v],`${v+1}.jpg`)
+                formData.append('img'+v,document.getElementById("photo-upload").files[v],`${v}.jpg`)
             }
-
+            document.getElementById("result").textContent = "working..."
             try {
                 // Send a POST request to Flask
                 const response = await fetch( "http://localhost:5000/api/car",

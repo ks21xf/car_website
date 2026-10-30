@@ -151,8 +151,7 @@ def upload_car():
     unique_features = request.form.get("unique_features")
     standard_features = request.form.get("standard_features")
     new_file_path = AWS_BASE_URL+"/"+id+"/"
-    print("d")
-    print(unique_features)
+
     if make == None or model == None or year == None or price == None or mileage == None or seats == None or transmission == None or fuel_type == None or id == None or num_images == 0 or unique_features == '' or standard_features == '':
         return {"Message":"Upload failed. At least one of the fields were not filled in. Ensure all fields are filled, at least one photo of the car is provided, and at least one standard feature and one unique feature is checked."}, 201
 

@@ -3,45 +3,72 @@ import mileage from './assets/mileage.svg';
 import gas_station from './assets/gas_station.svg';
 import person from './assets/person.svg';
 import transmission from './assets/transmission.svg';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import "./styles/car.css";
 
 export default function Car(){
     const car_data = useLoaderData()
 
-    var numImages = car_data.numImages
-    const [imgCounter,setImgCounter] = useState(1)
-    const navigate = useNavigate()
+    const [imgCounter,setImgCounter] = useState(0)
+    const [prevImgCounter,setPrevImgCounter] = useState(0)
 
-    function navigateToContactPage(cid){
-        navigate("/contact/"+cid);
+    function mod(n,m){
+        if(n<=-1){
+            return m-1
+        }else{
+            return n%m
+        }
     }
+    useEffect(()=>{
+        console.log(prevImgCounter,imgCounter)
+        document.getElementById(prevImgCounter).classList.remove('selected')
+        document.getElementById(imgCounter).classList.add('selected')
+        setPrevImgCounter(imgCounter)
+
+    },[imgCounter]);
+
+    function populatePaginationDots(){
+        var ele = []
+        for(var v=0;v<car_data.num_images;v++){
+            console.log(v)
+            ele.push(<button className='dots' id = {v} onClick={(e)=>{
+                setImgCounter(Number(e.target.id))
+                e.target.classList.add('selected')
+            }}><span></span></button>)
+        }
+        return ele
+    }
+
     return(
         <>
         <div style = {{display: "inline-flex"}}>
             <div>
-            <div id = "card-container" style ={{display: "inline-flex", flexDirection: "column", justifyItems: "center", margin: "0px 15px", padding: "0px 15px",  boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.25)'}}>
+            <div id = "card-container" style ={{display: "inline-flex", flexDirection: "column", justifyItems: "center", margin: "0px 15px", padding: "0px 15px",  boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.25)', position: "relative"}}>
                 <div style ={{ width: "600px", height: "450px" }} id ="img-container">
-                    <img style ={{width: "100%", height: "100%" }} src = {car_data.imgs+imgCounter+".jpg"}  onClick = {()=>{
-                        setImgCounter(imgCounter+1)
-                    }}></img>
+                    <img style ={{width: "100%", height: "100%"}} src = {car_data.imgs+imgCounter+".jpg"}></img>
                 </div>
+                <button className = 'carousel-buttons prev'onClick = {()=>{setImgCounter(mod(imgCounter-1,car_data.num_images))}} >&larr;</button>
+                <button className='carousel-buttons next' onClick = {()=>{setImgCounter(mod(imgCounter+1,car_data.num_images));}}>&rarr;</button>
+            </div>
+            <div id = "pagination-dots-div" style = {{height: "50px", display: "flex", flexDirection: "row",justifyContent: "center", gap:"2px"}}>
+                {car_data ? populatePaginationDots(): <p>loading...</p>}
             </div>
             <div>
                 <div style = {{display: "flex",justifyContent: "space-around"}}>
-                    <div style = {{display:"inline-flex", justifyItems: "center", flexDirection: "column"}}>
+                    <div className = "imgs-below-photo-cont">
                             <img style = {{width: "75px", height: "75px"}}src={mileage}/>
                             <center><span style ={{fontSize: "24px"}}> {car_data.mileage}km</span></center>
                     </div>
-                    <div style = {{display:"inline-flex", justifyItems: "center", flexDirection: "column"}}>
+                    <div className = "imgs-below-photo-cont">
                             <img style ={{width: "75px", height: "75px"}} src={transmission}/>
                             <center><span style ={{fontSize: "24px"}}> {car_data.transmission}</span></center>
                     </div>
-                    <div style = {{display:"inline-flex", justifyItems: "center", flexDirection: "column"}}>
+                    <div className = "imgs-below-photo-cont">
                             <img style ={{width: "75px", height: "75px"}} src={person}/>
                             <center><span style ={{fontSize: "24px"}}> {car_data.seats} seats</span></center>
                     </div>
 
-                    <div style = {{display:"inline-flex", justifyItems: "center", flexDirection: "column"}}>
+                    <div className = "imgs-below-photo-cont">
                             <img style ={{width: "75px", height: "75px"}} src={gas_station}/>
                             <center><span style ={{fontSize: "24px"}}> {car_data.fuel_type}</span></center>
                     </div>
@@ -56,6 +83,11 @@ export default function Car(){
                     <br></br>
                 </div>
                 <br></br>
+                <div style ={{display: "inline-flex", flexDirection: "column", justifyItems: "center", margin: "0px 15px", padding: "0px 15px",  boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.25)'}}>
+                    Contact Form
+                </div>
+                <br></br>
+
                 <div style ={{display: "inline-flex", flexDirection: "column", justifyItems: "center", margin: "0px 15px", padding: "0px 15px",  boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.25)'}}>
                     This Vehicle is Certified.<br></br>
                     Carfax Report:
