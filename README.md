@@ -1,5 +1,5 @@
 dependencies
-pip install flask flask-cors pymongo python-dotenv boto3
+pip install flask flask-cors pymongo python-dotenv boto3 Flask-Mail
 npm install @aws-sdk/client-s3
 
 
@@ -99,6 +99,7 @@ The option I ended up using was Amazon CloudFront, it acts as a content delivery
 
 Amazon CloudFront may cost (base?) $6 a month.
 
-
+## 6. Using Google for sending Emails via Flask
+This section covers how to send emails from your app, from a form on the frontend. Since we have a backend, we might as well leverage that fact to set up more secure/easier emailing. To prevent Emails from going to spam folder, you generally want to attach the message (along with other info about the recipient) to an intermediary email account that you set up, and then have that email address send you an email with all that information. I'm setting that up with Python Flask, but for the email address I've chosen my own google account. Google doesn't allow programmatic access to your account via your password, you instead have to generate a Google App Password and that is how it gains programmatic access. This too should be saved in your environment variables.
 
 

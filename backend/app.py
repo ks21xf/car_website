@@ -1,4 +1,5 @@
 from flask import Flask, jsonify, request
+from flask_mail import Message, Mail
 from flask_cors import CORS
 from pymongo import MongoClient
 from dotenv import load_dotenv
@@ -21,6 +22,19 @@ load_dotenv()
 app = Flask(__name__)
 CORS(app)
 
+#configure app for gmail
+user = os.getenv("GOOGLE_APP_USER")
+print("user "+ str(user))
+app.config['MAIL_SERVER'] = 'smtp.gmail.com'
+app.config['MAIL_PORT'] = 587 #port for TLS
+app.config['MAIL_USE_TLS'] = True
+app.config['MAIL_USE_SSL'] = False
+app.config['MAIL_USERNAME'] = user
+app.config['MAIL_PASSWORD'] = os.getenv("GOOGLE_APP_PSWD")
+
+mail = Mail(app)
+
+
 AWS_ACCESS_KEY=os.getenv("AWS_ACCESS_KEY")
 AWS_SECRET_ACCESS_KEY=os.getenv("AWS_SECRET_ACCESS_KEY")
 AWS_REGION=os.getenv("AWS_REGION")
@@ -41,7 +55,6 @@ client = MongoClient(CONNECTION_STRING)
 
 db = client['cars']
 collection = db['car']
-print(collection)
 
 @app.route("/api/getcar",methods=["GET"])
 def get_car_by_id():
@@ -196,6 +209,24 @@ def upload_car():
             )
 
     return {"Message":f"Sucessful upload. Save the ID of the car: {id}"}, 201
+
+
+@app.route('/api/send-email', methods = ['POST'])
+def send_email():
+    user_name = request.form.get("user_name")
+    user_email = request.form.get("user_email")
+    user_msg = request.form.get("user_msg")
+    user_ph = request.form.get("user_ph")
+    make = request.form.get("make")
+    cid = request.form.get("id")
+    model = request.form.get("model")
+    year = request.form.get("year")
+    msg = Message("Message from Website",
+                  sender=user,
+                  recipients=["koserravalle@gmail.com"])
+    msg.body = f"You have received an E-mail from someone on your website regarding the {year} {make} {model} (ID: {cid}):\n"+"Personal Information:\n\n" +f"Full Name: {user_name}\n Email: {user_email}\n Phone Number: {user_ph} \n\n Message: \n"+user_msg
+    mail.send(msg)
+    return  {"Message":"Message sent successfully!"}, 201
 
 if __name__ == "__main__":
     app.run(debug=True)
