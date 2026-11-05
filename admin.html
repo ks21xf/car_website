@@ -140,23 +140,27 @@
     </form>
     <p id="result-deletion"></p>
 
-    <h1>Log Bodywork/modifications for a car</h1>
+    <h1>Log Car Expenses</h1>
     <form id = "car-bodywork-form">
         <label>
             Car ID:
             <input type="text" id="bodywork-id">
         </label>
         <label>
-            Bodywork Done:
+            Description of work/services:
             <input type="text" id="bodywork-done">
         </label>
         <label>
-            Bodywork Price:
+            Cost before HST:
             <input type="text" id="bodywork-price">
         </label>
         <label>
-            Bodywork Date:
-            <input type="text" id="bodywork-date">
+            Date Purchased:
+            <input type="date" id="bodywork-date">
+        </label>
+        <label>
+            Vender/Supplier:
+            <input type="text" id="vender">
         </label>
         <button type="bodywork">Post Bodywork for Car</button>
 
@@ -190,6 +194,7 @@
             formData.append('price',document.getElementById("bodywork-price").value)
             formData.append('bodywork',document.getElementById("bodywork-done").value)
             formData.append('date',document.getElementById("bodywork-date").value)
+            formData.append('vender',document.getElementById("vender").value)
             console.log(formData)
             try {
                     // Send a POST request to Flask

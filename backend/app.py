@@ -10,6 +10,8 @@ import string
 import random
 from werkzeug.utils import secure_filename
 from decimal import Decimal, ROUND_HALF_UP #used for calculating tax and avoiding fp
+from bson.decimal128 import Decimal128 #conv decimal to bson decimal128
+
 
 #for ids
 def generate_alphanumeric(length):
@@ -55,6 +57,10 @@ client = MongoClient(CONNECTION_STRING)
 db = client['cars']
 collection = db['car']
 records = db['records']
+expenses = db['expenses']
+
+#define sales tax variable
+hst= Decimal('0.13')
 
 @app.route("/api/getcar",methods=["GET"])
 def get_car_by_id():
@@ -132,7 +138,6 @@ def mark_car_as_sold():
 
     #calculate tax - using industry standard financial libraries
     price = Decimal(str(data['price']))
-    hst= Decimal('0.13')
     tax = price * hst
     tax = tax.quantize(Decimal('0.01'), rounding=ROUND_HALF_UP)
     tax_str = f"{float(tax):.2f}"
@@ -267,9 +272,10 @@ def send_email():
 @app.route('/api/addmodification',methods =["POST"])
 def add_car_modification():
     cid = request.form.get("cid")
-    bodywork = request.form.get("bodywork")
+    expense = request.form.get("bodywork")
     date = request.form.get("date")
-    price = request.form.get("price")
+    cost = request.form.get("price")
+    vender = request.form.get("vender")
 
     query = {"cid": cid}
 
@@ -278,17 +284,20 @@ def add_car_modification():
     if data is None:
         return {"Message": "Request failed because no car with this ID was found. Verify the ID was entered correctly."}
 
-    #make bodywork obj
-    obj = {
-        "bodywork_done" : bodywork,
-        "bodywork_date" : date,
-        "bodywork_price" : price,
-    }
+    #tax
+    cost_decimal = Decimal(cost)
+    tax = cost_decimal * hst
+    tax = tax.quantize(Decimal('0.01'), rounding=ROUND_HALF_UP)
 
-    #$push signals we are pushing something to an array. in the dict specify the array name and the thing youre pushing into it
-    update = {"$push": {"body_work": obj}}
-
-    records.update_one(query,update,upsert=False) #last param adds this as a new entry to db if the cid didnt exist
+    expenses.insert_one({
+        "cid" : cid,
+        "cost": Decimal128(cost_decimal),
+        "hst" : Decimal128(tax),
+        "cost+hst": Decimal128(cost_decimal + hst),
+        "vender" : vender,
+        "expense" : expense,
+        "date" : date
+    })
 
     return {"Message": "Successfully added modification"},201
 
