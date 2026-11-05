@@ -19,7 +19,7 @@ export default function CarCard(props){
                         navigateToCarPage(props.car.cid)
                     }}>
                 <div style ={{ width: "400px", height: "300px", position: "relative"}} id ="img-container">
-                    <img style ={{width: "100%", height: "100%" }} src = {props.car.imgs+"1.jpg"}></img>
+                    <img style ={{width: "100%", height: "100%" }} src = {props.car.imgs+"0.jpg"}></img>
                     {props.car.sold ? <img id = "sold" style ={{width: "50%", height: "50%", transform: "translate(50%, -150%)" }}src = {sold}></img> : <></>}
 
                 </div>

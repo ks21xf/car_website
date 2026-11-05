@@ -5,12 +5,11 @@ from pymongo import MongoClient
 from dotenv import load_dotenv
 import boto3
 import os
-import io
 import base64
 import string
 import random
 from werkzeug.utils import secure_filename
-import uuid
+from decimal import Decimal, ROUND_HALF_UP #used for calculating tax and avoiding fp
 
 #for ids
 def generate_alphanumeric(length):
@@ -55,6 +54,7 @@ client = MongoClient(CONNECTION_STRING)
 
 db = client['cars']
 collection = db['car']
+records = db['records']
 
 @app.route("/api/getcar",methods=["GET"])
 def get_car_by_id():
@@ -110,6 +110,10 @@ def get_imgs():
 @app.route('/api/markcarassold',methods =["POST"])
 def mark_car_as_sold():
     cid = request.form.get("cid")
+    licensing = request.form.get("licensing")
+    buyer_info = request.form.get("buyer_info")
+    date = request.form.get("date")
+    print(licensing,buyer_info,date)
     query = {"cid": cid}
 
     data = collection.find_one(query)
@@ -125,6 +129,22 @@ def mark_car_as_sold():
         }
     }
     collection.update_one(query,update,upsert=False) #last param adds this as a new entry to db if the cid didnt exist
+
+    #calculate tax - using industry standard financial libraries
+    price = Decimal(str(data['price']))
+    hst= Decimal('0.13')
+    tax = price * hst
+    tax = tax.quantize(Decimal('0.01'), rounding=ROUND_HALF_UP)
+    tax_str = f"{float(tax):.2f}"
+    records_update = {
+        "$set" : {
+            "licensing": licensing,
+            "sold_to": buyer_info,
+            "sold_date": date,
+            "hst":  tax_str
+        }
+    }
+    records.update_one(query,records_update,upsert=False) #last param adds this as a new entry to db if the cid didnt exist
 
     return {"Message": "Successfully marked as sold."},201
 
@@ -187,6 +207,21 @@ def upload_car():
         "sold": False
     })
 
+    records.insert_one({
+        "cid" : id,
+        "make": make,
+        "model": model,
+        "year": year,
+        "mileage": mileage,
+        "buy_price": "",
+        "sale_price": price,
+        "hst": "",
+        "licensing": "",
+        "sold_to": "",
+        "sold_date": "",
+        "body_work": []
+    })
+
 
     #photo upload
     num_files= int(request.form.get('num_files'))
@@ -227,6 +262,37 @@ def send_email():
     msg.body = f"You have received an E-mail from someone on your website regarding the {year} {make} {model} (ID: {cid}):\n"+"Personal Information:\n\n" +f"Full Name: {user_name}\n Email: {user_email}\n Phone Number: {user_ph} \n\n Message: \n"+user_msg
     mail.send(msg)
     return  {"Message":"Message sent successfully!"}, 201
+
+#inserting a bodywork object into the bodywork array
+@app.route('/api/addmodification',methods =["POST"])
+def add_car_modification():
+    cid = request.form.get("cid")
+    bodywork = request.form.get("bodywork")
+    date = request.form.get("date")
+    price = request.form.get("price")
+
+    query = {"cid": cid}
+
+    data = records.find_one(query)
+    print("body",cid)
+    if data is None:
+        return {"Message": "Request failed because no car with this ID was found. Verify the ID was entered correctly."}
+
+    #make bodywork obj
+    obj = {
+        "bodywork_done" : bodywork,
+        "bodywork_date" : date,
+        "bodywork_price" : price,
+    }
+
+    #$push signals we are pushing something to an array. in the dict specify the array name and the thing youre pushing into it
+    update = {"$push": {"body_work": obj}}
+
+    records.update_one(query,update,upsert=False) #last param adds this as a new entry to db if the cid didnt exist
+
+    return {"Message": "Successfully added modification"},201
+
+
 
 if __name__ == "__main__":
     app.run(debug=True)

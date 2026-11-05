@@ -111,6 +111,18 @@
             Enter ID of car to Label as sold:
             <input type="text" id="car-to-mark-sold">
         </label>
+        <label>
+            Enter Contact Info (phone num, email) of Buyer:
+            <input type="text" id="sold-buyer-info">
+        </label>
+        <label>
+            Enter Date of Sale:
+            <input type="text" id="sold-date">
+        </label>
+        <label>
+            Enter Licensing Fees:
+            <input type="text" id="sold-licensing">
+        </label>
         <button type="mark-sold">Label as Sold</button>
 
     </form>
@@ -128,6 +140,28 @@
     </form>
     <p id="result-deletion"></p>
 
+    <h1>Log Bodywork/modifications for a car</h1>
+    <form id = "car-bodywork-form">
+        <label>
+            Car ID:
+            <input type="text" id="bodywork-id">
+        </label>
+        <label>
+            Bodywork Done:
+            <input type="text" id="bodywork-done">
+        </label>
+        <label>
+            Bodywork Price:
+            <input type="text" id="bodywork-price">
+        </label>
+        <label>
+            Bodywork Date:
+            <input type="text" id="bodywork-date">
+        </label>
+        <button type="bodywork">Post Bodywork for Car</button>
+
+    </form>
+    <p id="result-bodywork"></p>
 
 
     <script>
@@ -146,12 +180,46 @@
             numFields++
 
         }
+        const bodyworkForm = document.getElementById("car-bodywork-form")
+        bodyworkForm.addEventListener("submit", async (event)=>{
+            event.preventDefault();
+
+            const formData = new FormData()
+            console.log(document.getElementById("bodywork-id").value)
+            formData.append('cid',document.getElementById("bodywork-id").value)
+            formData.append('price',document.getElementById("bodywork-price").value)
+            formData.append('bodywork',document.getElementById("bodywork-done").value)
+            formData.append('date',document.getElementById("bodywork-date").value)
+            console.log(formData)
+            try {
+                    // Send a POST request to Flask
+                    const response = await fetch( "http://localhost:5000/api/addmodification",
+                        {   method: "POST",
+                            body: formData,
+                        });
+
+                    const data = await response.json();
+                    if (!response.ok) throw new Error(data.error || "Request failed");
+
+                    document.getElementById("result-bodywork").textContent =data.Message;
+                    form.reset();
+
+                } catch (error) {
+                    console.log(error)
+                    document.getElementById("result-bodywork").textContent =error.message;
+                }
+        });
+
         const markSoldForm = document.getElementById("car-mark-sold-form")
         markSoldForm.addEventListener("submit", async (event)=>{
             event.preventDefault();
 
             const formData = new FormData()
             formData.append('cid',document.getElementById("car-to-mark-sold").value)
+            formData.append('date',document.getElementById("sold-date").value)
+            formData.append('buyer_info',document.getElementById("sold-buyer-info").value)
+            formData.append('licensing',document.getElementById("sold-licensing").value)
+
             try {
                     // Send a POST request to Flask
                     const response = await fetch( "http://localhost:5000/api/markcarassold",
