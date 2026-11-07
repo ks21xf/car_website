@@ -10,6 +10,7 @@ import string
 import random
 from werkzeug.utils import secure_filename
 from decimal import Decimal, ROUND_HALF_UP #used for calculating tax and avoiding fp
+from datetime import date
 from bson.decimal128 import Decimal128 #conv decimal to bson decimal128
 from copy import deepcopy
 
@@ -294,7 +295,7 @@ def add_car_modification():
         "cid" : cid,
         "cost": Decimal128(cost_decimal),
         "hst" : Decimal128(tax),
-        "cost+hst": Decimal128(cost_decimal + hst),
+        "cost+hst": Decimal128(cost_decimal + tax),
         "vender" : vender,
         "expense" : expense,
         "date" : date
@@ -307,24 +308,31 @@ def generate_single_car_report():
 
     #get the cid from the form and get all expenses under the car id
     cid = request.form.get("cid")
+    start_date = date.fromisoformat(request.form.get("start-date"))
+    end_date = date.fromisoformat(request.form.get("end-date"))
     query = {"cid": cid}
 
     #if nothing matches the query, exit
-    # if(expenses.find_one(query) is None): #if this is none then there is less than one elements that match the query
-    #     return {"Message": "Report generation failed: ID not found in database."},201
+    if(expenses.find_one(query) is None): #if this is none then there is less than one elements that match the query
+        return {"Message": "Report generation failed: ID not found in database."},201
 
     data = expenses.find(query)
     table_data = [["Car ID","Cost","HST","Cost+HST","Vender/Supplier","Work Acquired","Date"]]
-    expense_data = [
-
-    ]
+    expense_data = []
 
     cost_,hst_ = Decimal(0),Decimal(0)
     for document in data:
+        document['date'] = date.fromisoformat(document['date'])
+
+        #if the date filters arent satisfied, then dont do anything
+        if start_date >= document['date'] or end_date <= document['date']:
+            continue
+
         document['cost'] = document['cost'].to_decimal()
         document['cost+hst'] = document['cost+hst'].to_decimal()
         document['hst'] = document['hst'].to_decimal()
         document.pop("_id",None)
+
 
         cost_ +=document['cost']
         hst_ +=document['hst']
@@ -337,7 +345,7 @@ def generate_single_car_report():
         print(document)
 
     #generate the report
-    generateSingleCarReport(table_data,cost_,hst_,cost_+hst_)
+    generateSingleCarReport(table_data,cost_,hst_,hst_+cost_,f"{start_date} to {end_date}")
 
     try:
         return send_file(
