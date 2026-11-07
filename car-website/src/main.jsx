@@ -5,6 +5,7 @@ import MainPage from './main_page.jsx'
 import Car from './car.jsx'
 import Test from './components/test.jsx'
 import { createBrowserRouter,RouterProvider} from "react-router-dom";
+import Header from './components/header.jsx'
 
 const router = createBrowserRouter([
     {
@@ -18,7 +19,7 @@ const router = createBrowserRouter([
     }
   },
   {
-    path: "/mainpage",
+    path: "/",
     element: <MainPage></MainPage>,
     loader: async () =>{
       const response = await fetch("http://localhost:5000/api/cars")
@@ -27,7 +28,7 @@ const router = createBrowserRouter([
   }
   },
   {
-    path: "/",
+    path: "/catalogue",
     element: <App></App>,
     loader: async () =>{
       const response = await fetch("http://localhost:5000/api/cars")
