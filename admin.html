@@ -151,21 +151,42 @@
             <input type="text" id="bodywork-done">
         </label>
         <label>
+            Vender/Supplier:
+            <input type="text" id="vender">
+        </label>
+        <label>
             Cost before HST:
             <input type="text" id="bodywork-price">
         </label>
         <label>
             Date Purchased:
-            <input type="date" id="bodywork-date">
-        </label>
-        <label>
-            Vender/Supplier:
-            <input type="text" id="vender">
+            <input type="text" id="bodywork-date">
         </label>
         <button type="bodywork">Post Bodywork for Car</button>
 
     </form>
     <p id="result-bodywork"></p>
+
+    <h1>Generate Report for a Car</h1>
+    <form id = "single-car-report-form">
+        <label>
+            Car ID:
+            <input type="text" id="single-car-report-id">
+        </label>
+        <label>
+            Start Date:
+            <input type="date" id="single-car-report-start-date">
+        </label>
+        <label>
+            End Date:
+            <input type="date" id="single-car-report-end-date">
+        </label>
+
+        <button type="single-car-report-submit">Generate Report</button>
+
+    </form>
+    <p id="result-single-car-report"></p>
+
 
 
     <script>
@@ -184,6 +205,38 @@
             numFields++
 
         }
+        const singleCarReportForm = document.getElementById("single-car-report-form")
+        singleCarReportForm.addEventListener("submit", async (event)=>{
+            event.preventDefault();
+
+            const formData = new FormData()
+            console.log(document.getElementById("bodywork-id").value)
+            formData.append('cid',document.getElementById("single-car-report-id").value)
+            formData.append('start-date',document.getElementById("single-car-report-start-date").value)
+            formData.append('end-date',document.getElementById("single-car-report-end-date").value)
+
+            try {
+                    // Send a POST request to Flask
+                    const response = await fetch( "http://localhost:5000/api/generatesinglecarreport",
+                        {   method: "POST",
+                            body: formData,
+                        });
+
+                    const data = await response
+                    const blo = await data.blob()
+                    const fileURL = URL.createObjectURL(blo); //create temp url
+                    window.open(fileURL, '_blank'); //open url in new tab
+
+                    if (!response.ok) throw new Error(data.error || "Request failed");
+
+                    document.getElementById("result-single-car-report").textContent =data.Message;
+                    form.reset();
+
+                } catch (error) {
+                    console.log(error)
+                    document.getElementById("result-single-car-report").textContent =error.message;
+                }
+        });
         const bodyworkForm = document.getElementById("car-bodywork-form")
         bodyworkForm.addEventListener("submit", async (event)=>{
             event.preventDefault();

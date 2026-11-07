@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, send_from_directory, abort, send_file
 from flask_mail import Message, Mail
 from flask_cors import CORS
 from pymongo import MongoClient
@@ -11,7 +11,10 @@ import random
 from werkzeug.utils import secure_filename
 from decimal import Decimal, ROUND_HALF_UP #used for calculating tax and avoiding fp
 from bson.decimal128 import Decimal128 #conv decimal to bson decimal128
+from copy import deepcopy
 
+#import custom functions for report generation
+from report_builder import generateSingleCarReport
 
 #for ids
 def generate_alphanumeric(length):
@@ -268,7 +271,6 @@ def send_email():
     mail.send(msg)
     return  {"Message":"Message sent successfully!"}, 201
 
-#inserting a bodywork object into the bodywork array
 @app.route('/api/addmodification',methods =["POST"])
 def add_car_modification():
     cid = request.form.get("cid")
@@ -280,7 +282,6 @@ def add_car_modification():
     query = {"cid": cid}
 
     data = records.find_one(query)
-    print("body",cid)
     if data is None:
         return {"Message": "Request failed because no car with this ID was found. Verify the ID was entered correctly."}
 
@@ -301,7 +302,52 @@ def add_car_modification():
 
     return {"Message": "Successfully added modification"},201
 
+@app.route('/api/generatesinglecarreport',methods =["POST"])
+def generate_single_car_report():
 
+    #get the cid from the form and get all expenses under the car id
+    cid = request.form.get("cid")
+    query = {"cid": cid}
+
+    #if nothing matches the query, exit
+    # if(expenses.find_one(query) is None): #if this is none then there is less than one elements that match the query
+    #     return {"Message": "Report generation failed: ID not found in database."},201
+
+    data = expenses.find(query)
+    table_data = [["Car ID","Cost","HST","Cost+HST","Vender/Supplier","Work Acquired","Date"]]
+    expense_data = [
+
+    ]
+
+    cost_,hst_ = Decimal(0),Decimal(0)
+    for document in data:
+        document['cost'] = document['cost'].to_decimal()
+        document['cost+hst'] = document['cost+hst'].to_decimal()
+        document['hst'] = document['hst'].to_decimal()
+        document.pop("_id",None)
+
+        cost_ +=document['cost']
+        hst_ +=document['hst']
+
+
+        build_list = []
+        for _,value in document.items():
+            build_list.append(value)
+        table_data.append(build_list)
+        print(document)
+
+    #generate the report
+    generateSingleCarReport(table_data,cost_,hst_,cost_+hst_)
+
+    try:
+        return send_file(
+            'C:/Users/koser/Desktop/car_website/report.pdf',
+            as_attachment=True,
+            download_name="report.pdf"
+        )
+    except FileNotFoundError:
+        abort(404)
+    return {"Message": "didnt work"},201
 
 if __name__ == "__main__":
     app.run(debug=True)
