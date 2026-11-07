@@ -58,7 +58,6 @@ def generateSingleCarReport(table_data2,cost,hst,cost_hst,date_range):
         ['Alpha']+ sales_data['Gamma']
     ]
     table = Table(table_data2,colWidths=[0.8 * inch, 1 * inch, 1 * inch],style=[
-        ("TOPPADDING", (0, 0), (-1, -1), 10),
         ('GRID',(0,0),(-1,0),0.5,colors.grey),
         ('BACKGROUND',(0,0),(-1,0),colors.darkgray),
         ('TEXTCOLOR',(0,0),(-1,0),colors.whitesmoke),
@@ -67,7 +66,9 @@ def generateSingleCarReport(table_data2,cost,hst,cost_hst,date_range):
 
     doc.build([image,cost_para_title,cost_para,hst_para_title,hst_para,cost_hst_para_title,cost_hst_para,title,Spacer(0,12),table])
 
-def generateFullReport(table_data2,cost,hst,cost_hst):
+
+
+def generateFullReport(table_data2,cost,hst,cost_hst,date_range):
     logo_path = "backend/logo_small.png"
     doc =SimpleDocTemplate('report.pdf',pagesize=A4)
     style = getSampleStyleSheet()
@@ -95,7 +96,7 @@ def generateFullReport(table_data2,cost,hst,cost_hst):
 
     image = Image(logo_path,width=70*mm,height=40*mm)
     image.hAlign ="CENTER"
-    title =Paragraph("Single Car Report", style['Title'])
+    title =Paragraph(f"Single Car Report: {date_range}", style['Title'])
     cost_para_title = Paragraph(f"Total Cost before HST: ",centered_style)
     cost_para = Paragraph(f" ${str(cost)}",centered_style_num)
     hst_para_title = Paragraph(f"Total HST Owed: ",centered_style)
