@@ -4,10 +4,6 @@ import CarCard from './CarCard'
 
 function Test() {
     const [cars,setCars] =useState([])
-    const cardat = [
-            { cid: 1, make: 'Chevy', model: 'Cruze', year: "2014" },
-            { cid: 2, make: 'Ford', model: 'Focus', year: "2015" },
-        ];
     const cars_data = useLoaderData()
     useEffect(()=>{
         if(cars_data){

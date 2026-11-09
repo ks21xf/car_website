@@ -1,7 +1,7 @@
 dependencies
 pip install flask flask-cors pymongo python-dotenv boto3 Flask-Mail
 npm install @aws-sdk/client-s3
-
+npm install react-responsive
 
 
 # Project Documentation: AWS S3 Media Storage Integration
