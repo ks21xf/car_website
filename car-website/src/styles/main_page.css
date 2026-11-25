@@ -1,3 +1,7 @@
+html{
+	scroll-behavior: smooth;
+	overflow-x: clip;
+}
 body{
     margin:0;
     padding:0;
@@ -6,16 +10,17 @@ body{
 
 .function-buttons{
     padding: 10px 15px;
-    width: 150px;
+    width: 35%;
 }
+.function-contact-buttons{
+    padding: 10px 15px;
+    width: 25%;
+}
+
 
 .para{
     width:80%;
     color:whitesmoke;
-}
-
-.offset{
-    margin-left:2%;
 }
 
 /* css list with numeber circle background -------------- */
@@ -71,3 +76,35 @@ body{
 			}
 
 /* End css list with numeber circle background -------------- */
+
+.scroll-left {
+ height: 8vh;
+ overflow: hidden;
+ position: relative;
+ background: #FD2B2B;
+ color: #eee;
+ font-weight: bold;
+}
+.scroll-left p {
+ position: absolute;
+ height: 100%;
+ margin: 0;
+ line-height: 7vh;
+ text-align: center;
+ white-space: nowrap;
+ width: max-content;
+
+ /* Starting position */
+ transform:translateX(200%); /*CHANGE THIS NUMBER TO CHANGE WHERE THE TEXT TELEPORTS TO WHEN OFFSCREEN */
+ /* Apply animation to this element */
+ animation: scroll-left 15s linear infinite;
+}
+/* Move it (define the animation) */
+@keyframes scroll-left {
+ 0%   {
+ transform: translateX(200%);
+ }
+ 100% {
+ transform: translateX(-100%);
+ }
+}

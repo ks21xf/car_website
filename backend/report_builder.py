@@ -9,7 +9,7 @@ from reportlab.lib.enums import TA_CENTER
 import decimal
 
 def generateSingleCarReport(table_data2,cost,hst,cost_hst,date_range):
-    logo_path = "backend/logo_small.png"
+    #logo_path = "backend/logo_small.png"
     doc =SimpleDocTemplate('report.pdf',pagesize=A4)
     style = getSampleStyleSheet()
 
@@ -34,8 +34,8 @@ def generateSingleCarReport(table_data2,cost,hst,cost_hst,date_range):
         fontSize= 14
     )
 
-    image = Image(logo_path,width=70*mm,height=40*mm)
-    image.hAlign ="CENTER"
+    # image = Image(logo_path,width=70*mm,height=40*mm)
+    # image.hAlign ="CENTER"
     title =Paragraph(f"Single Car Report: {date_range}", style['Title'])
     cost_para_title = Paragraph(f"Total Cost before HST: ",centered_style)
     cost_para = Paragraph(f" ${str(cost)}",centered_style_num)
@@ -94,8 +94,8 @@ def generateFullReport(table_data2,cost,hst,cost_hst,date_range):
         fontSize= 14
     )
 
-    image = Image(logo_path,width=70*mm,height=40*mm)
-    image.hAlign ="CENTER"
+    # image = Image(logo_path,width=70*mm,height=40*mm)
+    # image.hAlign ="CENTER"
     title =Paragraph(f"Single Car Report: {date_range}", style['Title'])
     cost_para_title = Paragraph(f"Total Cost before HST: ",centered_style)
     cost_para = Paragraph(f" ${str(cost)}",centered_style_num)

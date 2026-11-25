@@ -57,6 +57,7 @@ export default function Car(){
         formData.append("model",car_data.model)
         formData.append("year",car_data.year)
         formData.append("id",car_data.id)
+        formData.append("reason", "Interest in Vehicle")
 
         document.getElementById("result").textContent = "sending message..."
 
@@ -134,19 +135,8 @@ export default function Car(){
                             <label htmlFor="email">Phone Number:</label><br></br>
                             <input type="phone" id="user_pn" name="user_pn" required/>
                             <br></br>
-                            <label htmlFor="inquiry">Message Type:</label><br></br>
-                            <input onClick = {()=>{
-                                document.getElementById("user_msg").value = "Hi! I'm interested in your "+car_data.year+ " "+ car_data.make+ " "+ car_data.model + ". Is it still available?"
-                            }} type="radio" name ="inquiry" id="avail" defaultChecked/>
-                            <label htmlFor="inquiry">Check Availability</label><br></br>
-                            <input onClick = {()=>{
-                                console.log( document.getElementById("user_msg"))
-                                document.getElementById("user_msg").value = "Hi! I'm interested in booking a test drive with your "+car_data.year+ " "+ car_data.make+ " "+ car_data.model + ". When are you available?"
-                            }} type="radio" name="inquiry" id="test"/>
-                            <label htmlFor="inquiry">Book a Test Drive</label><br></br>
-
                             <label htmlFor="message">Message:</label><br></br>
-                            <textarea id="user_msg" name="user_msg" rows="5" required defaultValue = {"Hi! I'm interested in your "+car_data.year+ " "+ car_data.make+ " "+ car_data.model + ". Is it still available?"}></textarea><br></br>
+                            <textarea style ={{resize:"none"}} id="user_msg" name="user_msg" rows="5" required defaultValue = {"Hi! I'm interested in your "+car_data.year+ " "+ car_data.make+ " "+ car_data.model + ". Is it still available?"}></textarea><br></br>
                             <br></br>
                             <button onClick ={submitContactForm}>Send Message</button>
                             <p id = "result"></p>

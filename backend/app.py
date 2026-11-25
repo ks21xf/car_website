@@ -265,9 +265,10 @@ def send_email():
     cid = request.form.get("id")
     model = request.form.get("model")
     year = request.form.get("year")
-    msg = Message("Message from Website",
+    reason =request.form.get("reason")
+    msg = Message(f"{reason} - {year} {make} {model}",
                   sender=user,
-                  recipients=["koserravalle@gmail.com"])
+                  recipients=["koserravalle@gmail.com"])#sales@406autoparts.ca
     msg.body = f"You have received an E-mail from someone on your website regarding the {year} {make} {model} (ID: {cid}):\n"+"Personal Information:\n\n" +f"Full Name: {user_name}\n Email: {user_email}\n Phone Number: {user_ph} \n\n Message: \n"+user_msg
     mail.send(msg)
     return  {"Message":"Message sent successfully!"}, 201
