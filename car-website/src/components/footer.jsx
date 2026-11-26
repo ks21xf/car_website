@@ -61,9 +61,6 @@ export default function Footer(){
                     </div>
                 </div>
             </div>
-        <div style ={{height: "8vh",color:"#3A3C41"}}>
-            ticker
-        </div>
         </footer>
     );
 

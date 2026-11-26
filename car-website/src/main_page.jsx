@@ -271,6 +271,9 @@ function MainPage(){
                 </div>
             </div>
             <Footer></Footer>
+            <div style ={{height: "8vh",color:"#3A3C41"}}>
+                ticker
+            </div>
             <div style={{zIndex: "50", position:"fixed",left:"0",bottom:"0", width:"100vw", fontFamily:"sans-serif",fontSize:"5vh"}} className="scroll-left">
             <p>For Emergency Contact, Call (or text): 289-969-1336 </p>
             </div>
